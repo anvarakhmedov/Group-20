@@ -5,7 +5,7 @@ Status Update:
 
 Anvar: active
 
-Anthony:
+Anthony: active
 
 Austin:
 
