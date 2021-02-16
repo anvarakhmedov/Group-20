@@ -1,19 +1,25 @@
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO                                      # used for defining GPIO pins on the Pi
 import os
-from http.server import BaseHTTPRequestHandler, HTTPServer
-from time import sleep
-from pydbus import SystemBus
-import cgi
-import cgitb
+from http.server import BaseHTTPRequestHandler, HTTPServer   # BaseHTTPRequestHandler used for servicing incoming HTTP requests
+from time import sleep 
+from pydbus import SystemBus                                 # Allows for use of services regardless of what language they are written in
+                                                             # Multiple processes using the same bus can communicate with eachother
 
-BLUEZ_SERVICE = 'org.bluez'
+
+##############################################################
+#
+#                Bluetooth Service Setup
+#
+##############################################################
+  
+BLUEZ_SERVICE = 'org.bluez'                           # bluetooth service
 BLUEZ_DEV_IFACE = 'org.bluez.Device1'
 BLUEZ_CHR_IFACE = 'org.bluez.GattCharacteristic1'
 
 
 class Central:
 # def means function in python
-    def __init__(self, address):   # initialize mac address of bulb. Similar to a constructor in C++
+    def __init__(self, address):   # function to initialize mac address of bulb. self is an object used for calls and address (MAC) is an input
         self.bus = SystemBus()
         self.mngr = self.bus.get(BLUEZ_SERVICE, '/')
         self.dev_path = self._from_device_address(address)
@@ -74,24 +80,16 @@ GPIO.setmode(GPIO.BCM) # BCM is the numbering system you see on the actual pins
 
 dev = Central(device_address)   # store dev as class Central and pass in the device_address defined above. This argument is passed into the function __init__
 dev.connect()                   # use connect() function inside the class Central
-#GPIO.setup(18,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)   # setup pin 18 as an input and initialize it to an off state.
-#while True:   # indefinite loop
-#    motion = GPIO.input(18)
-#    if motion==1:
- #       print('Motion Detected!')
-#        dev.char_write(light_state , [1])   # write 1 to the characteristic light_state (turns bulb on)
-#        sleep(5)                            # wait for 5 seconds
-#        dev.char_write(light_state , [0])   # write 0, turns bulb off
-#        print(dev.char_read(light_state ))
-        #dev.disconnect()
-#    else:
-#        print('No Motion Detected Yet')
-#    sleep(1);
-        
 
+
+##############################################################
+#
+#                Python Server Setup
+#
+##############################################################
 
 host_name = '192.168.0.11'    # Change this to your Raspberry Pi IP address. type 'ip -4 address|grep inet' in terminal
-host_port = 8000
+host_port = 8080
 
 
 class MyServer(BaseHTTPRequestHandler):
@@ -106,7 +104,13 @@ class MyServer(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-
+        
+    def _redirect(self, path):
+        self.send_response(303)
+        self.send_header('Content-type', 'text/html')
+        self.send_header('Location', path)
+        self.end_headers()
+        
     def do_GET(self):
         """ do_GET() can be tested using curl command 
             'curl http://server-ip-address:port' 
@@ -114,40 +118,51 @@ class MyServer(BaseHTTPRequestHandler):
         html = '''
             <html>
             <body style="width:960px; margin: 20px auto;">
-            <h1>Smart Light Controller</h1>
+            <h1>Welcome to my Raspberry Pi</h1>
             <p>Current GPU temperature is {}</p>
-            <p>Turn LED: <a href="/on">On</a> <a href="/off">Off</a></p>   
-            <label for="tentacles">Choose Brightness (1-254):</label>
-            <input type="number" id="brightness" name="brightness" value="200">
-            <div> <input type="submit"> </div>
-            <div id="led-status"></div>
-            <script>
-                document.getElementById("led-status").innerHTML="{}";
-            </script>
+            <form action="/" method="POST">
+                Turn LED :
+                <input type="submit" name="submit" value="On">
+                <input type="submit" name="submit" value="Off">
+            </form>
+            <form action="/" method="POST">
+                Choose Brightness : 
+                <input type="number" name="quantity">
+                <button type="submit"> Submit </button>
+            </form>
             </body>
             </html>
         '''
-        form = cgi.FieldStorage()
-        brightness_amount = form.getvalue('brightness')
         temp = os.popen("/opt/vc/bin/vcgencmd measure_temp").read()
         self.do_HEAD()
-        status = ''
-        if self.path=='/':
-            GPIO.setmode(GPIO.BCM)
-            GPIO.setwarnings(False)
-            GPIO.setup(18, GPIO.OUT)
-        elif self.path=='/on':
-            GPIO.output(18, GPIO.HIGH)
-            status='LED is On'
-            dev.char_write(light_state , [1])
-            dev.char_write(brightness_value, [200]
-                           )   # this works, but need to pass in value entered in the html code
-        elif self.path=='/off':
-            GPIO.output(18, GPIO.LOW)
-            status='LED is Off'
-            dev.char_write(light_state , [0])
-        self.wfile.write(html.format(temp[5:], status).encode("utf-8"))
+        self.wfile.write(html.format(temp[5:]).encode("utf-8"))
+
+    def do_POST(self):
+        """ do_POST() can be tested using curl command 
+            'curl -d "submit=On" http://server-ip-address:port' 
+        """
+        content_length = int(self.headers['Content-Length'])    # Get the size of data
+        post_data = self.rfile.read(content_length).decode("utf-8")   # Get the data
+        post_data = post_data.split("=")[1]    # Only keep the value
         
+        # GPIO setup
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        GPIO.setup(18,GPIO.OUT)
+
+        if post_data == 'On':
+            GPIO.output(18, GPIO.HIGH)
+            dev.char_write(light_state , [1])
+        elif post_data == 'Off':
+            GPIO.output(18, GPIO.LOW)
+            dev.char_write(light_state , [0])
+        else:
+            dev.char_write(brightness_value, [int(format(post_data))])
+        print("LED is {}".format(post_data))
+        
+        self._redirect('/')
+        
+
 if __name__ == '__main__':
     http_server = HTTPServer((host_name, host_port), MyServer)
     print("Server Starts - %s:%s" % (host_name, host_port))
@@ -157,4 +172,5 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         http_server.server_close()
     
+
 
