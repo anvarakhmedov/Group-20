@@ -1,0 +1,113 @@
+2021-02-26 21:13:38.230205,brightness change,application,[70]
+2021-02-26 21:56:38.209077,on,application,0
+2021-02-26 21:56:39.184324,off,application,0
+2021-02-26 21:56:40.207929,on,application,0
+2021-02-26 21:56:41.476207,off,application,0
+2021-02-28 23:02:03.349131,on,application,0
+2021-02-28 23:02:04.129496,off,application,0
+2021-03-16 19:22:49.804241,on,application,0
+2021-03-16 19:22:50.583250,off,application,0
+2021-03-16 20:53:46.947069,brightness change,application,210
+2021-03-16 20:58:41.992414,on,application,[51]
+2021-03-16 21:01:19.263170,brightness change,application,50
+2021-03-16 21:01:56.754644,brightness change,application,220
+2021-03-16 21:02:09.429632,brightness change,application,250
+2021-03-16 21:02:20.055893,off,application,[189]
+2021-03-16 21:02:43.748222,on,application,[61]
+2021-03-16 21:04:26.857190,brightness change,application,250
+2021-03-16 21:04:39.629975,off,application,[189]
+2021-03-16 21:05:01.083270,on,application,[61]
+2021-03-16 21:07:22.509420,off,application,[189]
+2021-03-16 21:08:16.186174,on,application,[61]
+2021-03-16 21:08:39.924246,brightness change,application,50
+2021-03-16 21:11:22.507367,off,application,0
+2021-03-16 21:11:37.766455,on,application,[12]
+2021-03-16 21:11:47.711439,off,application,0
+2021-03-16 21:11:51.124825,brightness change,application,250
+2021-03-16 21:12:03.262414,off,application,0
+2021-03-16 21:12:05.017881,on,application,[61]
+2021-03-16 21:17:00.789802,off,application,0
+2021-03-16 21:17:56.466226,on,application,[61]
+2021-03-16 21:17:57.687824,off,application,0
+2021-03-16 21:18:59.399817,brightness change,application,170
+2021-03-16 21:19:07.736199,brightness change,application,40
+2021-03-16 21:19:12.367419,brightness change,application,50
+2021-03-16 21:19:28.310231,brightness change,application,220
+2021-03-16 21:22:52.324946,brightness change,application,250
+2021-03-16 21:22:58.761618,off,application,0
+2021-03-16 21:23:03.586175,brightness change,application,130
+2021-03-16 21:25:17.650393,brightness change,application,20
+2021-03-16 21:25:18.525546,off,application,0
+2021-03-16 21:25:20.328605,on,application,[5]
+2021-03-16 21:25:33.345449,brightness change,application,180
+2021-03-16 21:32:03.882242,on,application,[44]
+2021-03-16 21:32:10.803557,off,application,0
+2021-03-16 21:32:15.043565,brightness change,application,250
+2021-03-16 21:33:05.061021,brightness change,application,120
+2021-03-16 21:51:32.914649,off,application,0
+2021-03-16 21:52:08.745984,on,application,[29]
+2021-03-16 21:52:09.380176,off,application,0
+2021-03-16 21:52:10.158394,brightness change,application,180
+2021-03-16 21:53:33.376636,off,application,0
+2021-03-16 21:53:35.034129,on,application,[44]
+2021-03-16 21:53:47.027933,brightness change,application,250
+2021-03-16 21:53:59.312202,brightness change,application,250
+2021-03-16 21:54:04.088253,brightness change,application,0
+2021-03-16 21:54:08.428195,brightness change,application,130
+2021-03-16 21:54:19.152528,brightness change,application,130
+2021-03-16 21:55:22.771221,off,application,0
+2021-03-16 21:55:26.865675,on,application,[32]
+2021-03-16 21:55:36.520708,brightness change,application,250
+2021-03-16 21:55:45.634221,brightness change,application,130
+2021-03-16 21:55:54.459386,brightness change,application,30
+2021-03-16 21:56:09.572808,on,application,[30]
+2021-03-16 21:56:16.982281,off,application,0
+2021-03-16 21:56:18.738051,on,application,[7]
+2021-03-16 21:56:26.926478,off,application,0
+2021-03-16 21:56:28.728925,on,application,[7]
+2021-03-16 21:57:04.512162,off,application,0
+2021-03-16 21:57:10.020230,brightness change,application,130
+2021-03-16 21:57:14.065982,brightness change,application,190
+2021-03-16 21:57:17.868574,brightness change,application,30
+2021-03-16 21:57:20.843764,off,application,0
+2021-03-16 21:57:24.352807,on,application,[30]
+2021-03-16 21:57:32.835087,brightness change,application,180
+2021-03-16 21:57:36.540811,off,application,0
+2021-03-16 21:57:39.172321,on,application,[180]
+2021-03-16 21:58:51.225693,off,application,0
+2021-03-16 21:58:54.784843,brightness change,application,250
+2021-03-16 21:58:59.317381,brightness change,application,0
+2021-03-16 21:59:13.164583,on,application,[250]
+2021-03-16 21:59:18.086167,brightness change,application,60
+2021-03-16 21:59:20.864518,off,application,0
+2021-03-16 21:59:22.866012,on,application,[60]
+2021-03-16 22:08:11.023827,off,application,0
+2021-03-17 23:35:11.341455,on,application,[60]
+2021-03-17 23:35:12.121195,off,application,0
+2021-03-17 23:35:13.975288,brightness change,application,250
+2021-03-17 23:35:14.705476,brightness change,application,0
+2021-03-17 23:35:16.612070,brightness change,application,70
+2021-03-17 23:35:18.653841,brightness change,application,250
+2021-03-17 23:35:21.435597,brightness change,application,230
+2021-03-17 23:35:23.089375,brightness change,application,0
+2021-03-17 23:35:24.798433,on,application,[230]
+2021-03-17 23:35:27.087474,brightness change,application,250
+2021-03-17 23:35:29.236321,brightness change,application,40
+2021-03-17 23:35:30.792817,on,application,[40]
+2021-03-17 23:35:33.280062,off,application,0
+2021-03-17 23:35:35.277601,brightness change,application,160
+2021-03-17 23:35:44.590108,off,application,0
+2021-03-18 14:08:10.425386,on,application,[160]
+2021-03-18 14:08:11.010402,off,application,0
+2021-03-18 14:08:12.863932,brightness change,application,250
+2021-03-18 14:08:13.690747,brightness change,application,0
+2021-03-18 14:08:15.352193,brightness change,application,40
+2021-03-18 14:08:17.007134,brightness change,application,240
+2021-03-18 14:08:18.468839,off,application,0
+2021-03-21 23:21:32.839172,off,application,0
+2021-03-21 23:21:34.300850,brightness change,application,60
+2021-03-21 23:21:35.176809,brightness change,application,150
+2021-03-21 23:21:36.007349,brightness change,application,250
+2021-03-21 23:21:36.931421,off,application,0
+2021-03-21 23:21:38.396939,on,application,[250]
+2021-03-21 23:21:40.637257,off,application,0
