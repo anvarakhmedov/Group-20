@@ -27,7 +27,7 @@ class lightbulb():
 
     light_state = '932c32bd-0002-47a2-835a-a8d455b859dd'   # characteristic ID for toggling light on/off
     brightness_value = '932c32bd-0003-47a2-835a-a8d455b859dd'    # charactersitic ID for changing brightness (value between 1-254)
-    
+
 
     def __init__(self, address):   # function to initialize mac address of bulb. self is an object used for calls and address (MAC) is an input
         
@@ -87,14 +87,15 @@ class lightbulb():
             return self.chars[uuid.casefold()].ReadValue({})
         else:
             raise KeyError(f'UUID {uuid} not found')
-            
+
+
     #~~~~~~~~~~~~~~~~~~~~~~ Bulb Controlling Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     def turnOn(self):
         print('Light turning on')
         self.char_write(light_state , [1])
         sleep(0.5)
-        current_brightness = self.char_read(brightness_value)
+        current_brightness = self.char_read(brightness_value)[0]
         lightstate = self.char_read(light_state)
         print('Light State is' + (str)(lightstate))
         print('Brightness is currently set to ' + (str)(current_brightness))
@@ -122,4 +123,5 @@ class lightbulb():
         
     #~~~~~~~~~~~~~~~~~~~~~ END Bulb Controlling Functions ~~~~~~~~~~~~~~~~~~~~~~~ 
        
+
 
