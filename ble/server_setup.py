@@ -11,9 +11,11 @@ import busio
 import adafruit_veml7700
 import _thread
 from time import sleep
+from functools import partial
 
 
 from sensor_data import sensor_class
+#from sensor_control_class import sensor_control_class
 
 # # GPIO setup
 # GPIO.setmode(GPIO.BCM)
@@ -44,7 +46,7 @@ bulb.turnOff
 # Assign classifier to sensor_data module
 sensor = sensor_class()
 brightness = 0
-
+#sensor_control_temp = sensor_control_class()
 
 #Handle History and Ststus File IO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def writeHistory(status, method, brightness):
@@ -98,8 +100,10 @@ class server(BaseHTTPRequestHandler):
         html = html%(brightness)
         
         self.wfile.write(html.encode("utf-8"))
-
+    global post_data
+    post_data = 'Undefined'
     def do_POST(self):
+        global post_data
         content_length = int(self.headers['Content-Length'])    # Get the size of data
         post_data1 = self.rfile.read(content_length).decode("utf-8")   # Get the data
         post_data = post_data1.split("=")[1]    # Only keep the value
@@ -113,14 +117,46 @@ class server(BaseHTTPRequestHandler):
             writeHistory('off', 'application', current_brightness)
             print("post data: ",current_brightness)
         elif post_data == 'Motion':
-            current_brightness = bulb.turnOn()
+             sensorSelect = post_data 
         else:
             brightness = int(format(post_data))
             bulb.setBrightness(brightness)
             writeHistory('brightness change', 'application', brightness)  # TODO: UnboundLocalError: local variable 'brightness' referenced before assignment
             print("post data: ",brightness)
-
+        print("post data is: ", post_data)
+        #self._redirect('/')
+        
+#         def new_thread(post_data1):
+#                 #     def sensor_control(self):
+#             current_state = [0]
+#             #_thread.start_new_thread(sensor_control,())
+#             while True:
+#                 light_state_id = bulb.light_state      # declare variable to hold light state characteristic id
+#                 lightstate = bulb.char_read(light_state_id)  # read actual light state of bulb. Data type is list
+#                 sensor.read_sensor_data()    # call read_sensor_data() method from sensor_data.py
+#                 sleep(1)
+#                 #print("lightstate is", lightstate)
+#                 #print("current_state is", current_state)
+#                 post_data = post_data1
+#                 current_state = lightstate
+#                 print("post data in sensor control is ",post_data)
+#                 if sensor.is_touch == 1 and current_state == [0]:# and lightstate == [0]:  #TODO: web page bulb on/off functions interfere with this state machine
+#                     current_brightness = bulb.turnOn()
+#                     #current_state = [1]
+#                     GPIO.output(22,GPIO.LOW)
+#                     sleep(1)
+#                     GPIO.output(22,GPIO.HIGH)
+#                 elif sensor.is_touch == 1 and current_state == [1]: #and lightstate == [1]:
+#                     current_brightness = bulb.turnOff()
+#                     #current_state = [0]
+#                     GPIO.output(22,GPIO.LOW)
+#                     sleep(1)
+#                     GPIO.output(22,GPIO.HIGH)
+        #temp = partial(new_thread,self.post_data)           
+        #_thread.start_new_thread(new_thread(self.post_data),())
+        print("TEST")
         self._redirect('/')
+        #return post_data
     
     def sensor_control():
         current_state = [0]
@@ -128,56 +164,47 @@ class server(BaseHTTPRequestHandler):
             light_state_id = bulb.light_state      # declare variable to hold light state characteristic id
             lightstate = bulb.char_read(light_state_id)  # read actual light state of bulb. Data type is list
             sensor.read_sensor_data()    # call read_sensor_data() method from sensor_data.py
-            #sleep(1)
             #print("lightstate is", lightstate)
             #print("current_state is", current_state)
-            #post_data = self.post_data1 
-            current_state = lightstate
-            #print("post data: ",post_data)
-            if sensor.is_touch == 1 and current_state == [0]:# and lightstate == [0]:  #TODO: web page bulb on/off functions interfere with this state machine
+            #current_state = lightstate
+            print("post data in sensor control is ",post_data)
+            if sensor.is_touch == 1 and lightstate == [0]: #and current_state == [0]:  #TODO: web page bulb on/off functions interfere with this state machine
                 current_brightness = bulb.turnOn()
                 #current_state = [1]
                 GPIO.output(22,GPIO.LOW)
                 sleep(1)
                 GPIO.output(22,GPIO.HIGH)
-            elif sensor.is_touch == 1 and current_state == [1]: #and lightstate == [1]:
+            elif sensor.is_touch == 1 and lightstate == [1]: #and current_state == [1]:
                 current_brightness = bulb.turnOff()
                 #current_state = [0]
                 GPIO.output(22,GPIO.LOW)
                 sleep(1)
                 GPIO.output(22,GPIO.HIGH)
-            #elif post_data == 'Motion' and sensor.is_motion == 1 and lightstate == [0]:
-                #current_brightness = bulb.turnOn()
-#_thread.start_new_thread(sensor.read_sensor_data,())   # start a new thread and run the sensors() function in the server class to read sensor data.
-_thread.start_new_thread(server.sensor_control,())   # start a new thread and run the sensors() function in the server class to read sensor data.
+            elif post_data == 'Motion' and sensor.is_motion == 1 and lightstate == [0]:
+                current_brightness = bulb.turnOn()
+#     def call_sensor_control():
+#         while True:
+#             sensor_control_temp.sensor_control()
+#     
+# _thread.start_new_thread(server.call_sensor_control,())
+    #def new_thread(self):
+#server.sensor_control()
+_thread.start_new_thread(server.sensor_control,())
+            
+    #new_thread()
+#server_instance = server(BaseHTTPRequestHandler,'C9:F0:78:8D:F2:F9',server)
+#_thread.start_new_thread(server_instance.sensor_control,())   # start a new thread and run the sensors() function in the server class to read sensor data.
+#server(BaseHTTPRequestHandler,'C9:F0:78:8D:F2:F9',server).new_thread()
+    #new_thread_temp = new_thread()
+    
+
 
 if __name__ == '__main__':
     http_server = HTTPServer((host_name, host_port), server)
     print("Server Starts - %s:%s" % (host_name, host_port))
+    #server1 = server(http_server,server)
+    #_thread.start_new_thread(server1.sensor_control,())   # start a new thread and run the sensors() function in the server class to read sensor data.
     try:
         http_server.serve_forever()
     except KeyboardInterrupt:
         http_server.server_close()
-
-     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
