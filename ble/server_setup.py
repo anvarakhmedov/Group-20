@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from http.server import BaseHTTPRequestHandler, HTTPServer   # BaseHTTPRequestHandler used for servicing incoming HTTP requests
 import RPi.GPIO as GPIO                                      # used for defining GPIO pins on the Pi
 import csv
@@ -11,10 +12,12 @@ import busio
 import adafruit_veml7700
 import _thread
 from time import sleep
-from functools import partial
-
-
+import time
 from sensor_data import sensor_class
+import math
+import matplotlib.pyplot as plt
+import pandas as pd
+
 #from sensor_control_class import sensor_control_class
 
 # # GPIO setup
@@ -67,6 +70,31 @@ def getBrightness():
         writer = csv.writer(f)
         writer.writerow([time, status, method, brightness])
         
+def graphHistory():
+    data = pd.read_csv('history.csv')
+    data = data.iloc[-20:]  # get last 20 entries
+
+    x = data["time"]
+    y = data["brightness"]
+
+    xAxis = []
+
+    for i in x: 
+        xAxis.append(i[5:16]) 
+
+    plt.bar(x,y, 1)
+    plt.xticks(x, xAxis)
+    plt.yticks(range(0,257,32))
+    plt.grid(axis='y', linestyle='--')
+    plt.xlabel('Date')
+    plt.ylabel('Brightness')
+    plt.title('Activation History')
+    plt.xticks(rotation = -45)
+    plt.savefig('html/images/history.png', bbox_inches = "tight")
+    plt.clf()
+
+    # <img src="html/images/history.png" alt="Lightbulb Activation Data">
+        
 
 class server(BaseHTTPRequestHandler):
     bulb.turnOff
@@ -78,6 +106,34 @@ class server(BaseHTTPRequestHandler):
         """ do_HEAD() can be tested use curl command 
             'curl -I http://server-ip-address:port' 
         """
+        if self.path.endswith(".png"):
+            #print(elf.path)
+            f = open("/home/pi/Desktop/ble" + self.path, 'rb')
+            self.send_response(200)
+            self.send_header('Content-type', 'image/png')
+            self.end_headers()
+            self.wfile.write(f.read())
+            f.close()
+            return
+        elif self.path.endswith(".jpg"):
+            #print(elf.path)
+            f = open("/home/pi/Desktop/ble" + self.path, 'rb')
+            self.send_response(200)
+            self.send_header('Content-type', 'image/jpg')
+            self.end_headers()
+            self.wfile.write(f.read())
+            f.close()
+            return
+        elif self.path.endswith(".ico"):
+            #print(elf.path)
+            f = open("/home/pi/Desktop/ble" + self.path, 'rb')
+            self.send_response(200)
+            self.send_header('Content-type', 'image/ico')
+            self.end_headers()
+            self.wfile.write(f.read())
+            f.close()
+            return
+        
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -87,7 +143,9 @@ class server(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.send_header('Location', path)
         self.end_headers()
-        
+    
+    
+    
     def do_GET(self):
         """ do_GET() can be tested using curl command 
             'curl http://server-ip-address:port' 
@@ -100,10 +158,23 @@ class server(BaseHTTPRequestHandler):
         html = html%(brightness)
         
         self.wfile.write(html.encode("utf-8"))
+        
     global post_data
+    global motion_valid
+    global last_light_input
+    global last_motion_input
+    #global motion_valid
+    motion_valid = 0
+    last_light_input = 'Undefined'
+    last_motion_input = 'Undefined'
     post_data = 'Undefined'
+    print("motion_valid ", motion_valid)
+    
     def do_POST(self):
         global post_data
+        global last_light_input
+        global last_motion_input
+        global motion_valid
         content_length = int(self.headers['Content-Length'])    # Get the size of data
         post_data1 = self.rfile.read(content_length).decode("utf-8")   # Get the data
         post_data = post_data1.split("=")[1]    # Only keep the value
@@ -114,81 +185,69 @@ class server(BaseHTTPRequestHandler):
             print("post data: ",current_brightness)
         elif post_data == 'Off': 
             current_brightness = bulb.turnOff()
+            motion_valid = 0
             writeHistory('off', 'application', current_brightness)
             print("post data: ",current_brightness)
         elif post_data == 'Motion':
-             sensorSelect = post_data 
+            last_motion_input = 'Motion'
+        elif post_data == 'Light':
+            last_light_input = 'Light'
+        elif post_data == 'Neither':
+            last_motion_input = 'Undefined'
+            last_light_input = 'Undefined'
         else:
             brightness = int(format(post_data))
             bulb.setBrightness(brightness)
-            writeHistory('brightness change', 'application', brightness)  # TODO: UnboundLocalError: local variable 'brightness' referenced before assignment
+            writeHistory('brightness change', 'application', brightness)  
             print("post data: ",brightness)
+        graphHistory()
         print("post data is: ", post_data)
-        #self._redirect('/')
-        
-#         def new_thread(post_data1):
-#                 #     def sensor_control(self):
-#             current_state = [0]
-#             #_thread.start_new_thread(sensor_control,())
-#             while True:
-#                 light_state_id = bulb.light_state      # declare variable to hold light state characteristic id
-#                 lightstate = bulb.char_read(light_state_id)  # read actual light state of bulb. Data type is list
-#                 sensor.read_sensor_data()    # call read_sensor_data() method from sensor_data.py
-#                 sleep(1)
-#                 #print("lightstate is", lightstate)
-#                 #print("current_state is", current_state)
-#                 post_data = post_data1
-#                 current_state = lightstate
-#                 print("post data in sensor control is ",post_data)
-#                 if sensor.is_touch == 1 and current_state == [0]:# and lightstate == [0]:  #TODO: web page bulb on/off functions interfere with this state machine
-#                     current_brightness = bulb.turnOn()
-#                     #current_state = [1]
-#                     GPIO.output(22,GPIO.LOW)
-#                     sleep(1)
-#                     GPIO.output(22,GPIO.HIGH)
-#                 elif sensor.is_touch == 1 and current_state == [1]: #and lightstate == [1]:
-#                     current_brightness = bulb.turnOff()
-#                     #current_state = [0]
-#                     GPIO.output(22,GPIO.LOW)
-#                     sleep(1)
-#                     GPIO.output(22,GPIO.HIGH)
-        #temp = partial(new_thread,self.post_data)           
-        #_thread.start_new_thread(new_thread(self.post_data),())
-        print("TEST")
         self._redirect('/')
-        #return post_data
     
     def sensor_control():
-        current_state = [0]
+        light_valid = 1
+        global motion_valid
         while True:
             light_state_id = bulb.light_state      # declare variable to hold light state characteristic id
             lightstate = bulb.char_read(light_state_id)  # read actual light state of bulb. Data type is list
             sensor.read_sensor_data()    # call read_sensor_data() method from sensor_data.py
-            #print("lightstate is", lightstate)
-            #print("current_state is", current_state)
+            #print("last_motion_input: ", last_motion_input)
+            #print("last_light_input: ", last_light_input)
+            #print("post_data = ", post_data)
+            print("motion_valid = ", motion_valid)
+            print("motion = ", sensor.is_motion)
+            print("light_valid =", light_valid)
             #current_state = lightstate
-            print("post data in sensor control is ",post_data)
-            if sensor.is_touch == 1 and lightstate == [0]: #and current_state == [0]:  #TODO: web page bulb on/off functions interfere with this state machine
+            #print("post data in sensor control is ",post_data)
+            if sensor.is_touch == 1 and lightstate == [0]: #and current_state == [0]: 
                 current_brightness = bulb.turnOn()
-                #current_state = [1]
+                print("Turned on by touch sensor")
+                light_valid = 1
                 GPIO.output(22,GPIO.LOW)
                 sleep(1)
                 GPIO.output(22,GPIO.HIGH)
             elif sensor.is_touch == 1 and lightstate == [1]: #and current_state == [1]:
                 current_brightness = bulb.turnOff()
-                #current_state = [0]
+                print("Turned off by touch sensor")
+                light_valid = 0
                 GPIO.output(22,GPIO.LOW)
                 sleep(1)
                 GPIO.output(22,GPIO.HIGH)
-            elif post_data == 'Motion' and sensor.is_motion == 1 and lightstate == [0]:
-                current_brightness = bulb.turnOn()
-#     def call_sensor_control():
-#         while True:
-#             sensor_control_temp.sensor_control()
-#     
-# _thread.start_new_thread(server.call_sensor_control,())
-    #def new_thread(self):
-#server.sensor_control()
+            elif last_light_input == 'Light' and post_data != 'Off': #or light_valid == 1:# and lightstate == [1]:
+                sleep(0.5)
+                set_brightness = sensor.brightness 
+                print("brightness = ", set_brightness)
+                bulb.setBrightness(set_brightness)
+                print("actual light = ",sensor.is_light)
+            elif last_motion_input == 'Motion' and sensor.is_motion == 1 and lightstate == [0]:
+                sleep(0.5)
+                if (post_data == 'Off' and motion_valid == 0) or light_valid == 0: #and motion_valid == 0:
+                    motion_valid = 1
+                    light_valid = 1
+                    sleep(10)
+                else:
+                    current_brightness = bulb.turnOn()
+
 _thread.start_new_thread(server.sensor_control,())
             
     #new_thread()
@@ -202,9 +261,9 @@ _thread.start_new_thread(server.sensor_control,())
 if __name__ == '__main__':
     http_server = HTTPServer((host_name, host_port), server)
     print("Server Starts - %s:%s" % (host_name, host_port))
-    #server1 = server(http_server,server)
-    #_thread.start_new_thread(server1.sensor_control,())   # start a new thread and run the sensors() function in the server class to read sensor data.
     try:
         http_server.serve_forever()
     except KeyboardInterrupt:
         http_server.server_close()
+
+
