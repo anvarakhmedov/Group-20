@@ -18,26 +18,12 @@ import math
 import matplotlib.pyplot as plt
 import pandas as pd
 
-#from sensor_control_class import sensor_control_class
 
-# # GPIO setup
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setwarnings(False)
-# GPIO.setup(24,GPIO.IN) # motion sensor, labelled #24 on breakout board
-# GPIO.setup(27,GPIO.IN) # touch sensor, labelled #27 on breakout board
-# 
-# # Light Sensor Module Setup. Use veml7700.light to output ambient light levels and veml7700.lux to output light in lux
-# 
-# i2c = busio.I2C(board.SCL, board.SDA)
-# veml7700 = adafruit_veml7700.VEML7700(i2c)
-# light = int(veml7700.lux)
 GPIO.setup(22,GPIO.OUT)
 GPIO.output(22,GPIO.HIGH)
 
 hostname = socket.gethostname()
-host_name = socket.gethostbyname(hostname)   # type 'ip -4 address|grep inet' in terminal to retrieve device IP address
-#host_name = '130.108.226.76'    # Anthony's Testing IP
-#host_name = '10.16.164.10'
+host_name = socket.gethostbyname(hostname)   # type 'ip -4 address | grep inet' in terminal to retrieve device IP address
 host_port = 8080
 
 #  Connect to bulb ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,7 +35,6 @@ bulb.turnOff
 # Assign classifier to sensor_data module
 sensor = sensor_class()
 brightness = 0
-#sensor_control_temp = sensor_control_class()
 
 #Handle History and Ststus File IO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def writeHistory(status, method, brightness):
@@ -163,7 +148,6 @@ class server(BaseHTTPRequestHandler):
     global motion_valid
     global last_light_input
     global last_motion_input
-    #global motion_valid
     motion_valid = 0
     last_light_input = 'Undefined'
     last_motion_input = 'Undefined'
@@ -211,50 +195,40 @@ class server(BaseHTTPRequestHandler):
             light_state_id = bulb.light_state      # declare variable to hold light state characteristic id
             lightstate = bulb.char_read(light_state_id)  # read actual light state of bulb. Data type is list
             sensor.read_sensor_data()    # call read_sensor_data() method from sensor_data.py
-            #print("last_motion_input: ", last_motion_input)
-            #print("last_light_input: ", last_light_input)
-            #print("post_data = ", post_data)
             print("motion_valid = ", motion_valid)
             print("motion = ", sensor.is_motion)
             print("light_valid =", light_valid)
-            #current_state = lightstate
-            #print("post data in sensor control is ",post_data)
-            if sensor.is_touch == 1 and lightstate == [0]: #and current_state == [0]: 
+            if sensor.is_touch == 1 and lightstate == [0]: # lightstate is on/off state of bulb
                 current_brightness = bulb.turnOn()
                 print("Turned on by touch sensor")
                 light_valid = 1
-                GPIO.output(22,GPIO.LOW)
+                GPIO.output(22,GPIO.LOW)  # reset touch sensor output
                 sleep(1)
                 GPIO.output(22,GPIO.HIGH)
-            elif sensor.is_touch == 1 and lightstate == [1]: #and current_state == [1]:
+            elif sensor.is_touch == 1 and lightstate == [1]: 
                 current_brightness = bulb.turnOff()
                 print("Turned off by touch sensor")
                 light_valid = 0
-                GPIO.output(22,GPIO.LOW)
+                GPIO.output(22,GPIO.LOW)  # reset touch sensor output
                 sleep(1)
                 GPIO.output(22,GPIO.HIGH)
-            elif last_light_input == 'Light' and post_data != 'Off': #or light_valid == 1:# and lightstate == [1]:
+            elif last_light_input == 'Light' and post_data != 'Off' and post_data != 'Motion': #or light_valid == 1:# and lightstate == [1]:
                 sleep(0.5)
                 set_brightness = sensor.brightness 
                 print("brightness = ", set_brightness)
                 bulb.setBrightness(set_brightness)
                 print("actual light = ",sensor.is_light)
-            elif last_motion_input == 'Motion' and sensor.is_motion == 1 and lightstate == [0]:
+            elif last_motion_input == 'Motion' and post_data != 'Light' and sensor.is_motion == 1 and lightstate == [0]:
                 sleep(0.5)
                 if (post_data == 'Off' and motion_valid == 0) or light_valid == 0: #and motion_valid == 0:
                     motion_valid = 1
                     light_valid = 1
+                    print("in the loop")
                     sleep(10)
                 else:
                     current_brightness = bulb.turnOn()
 
 _thread.start_new_thread(server.sensor_control,())
-            
-    #new_thread()
-#server_instance = server(BaseHTTPRequestHandler,'C9:F0:78:8D:F2:F9',server)
-#_thread.start_new_thread(server_instance.sensor_control,())   # start a new thread and run the sensors() function in the server class to read sensor data.
-#server(BaseHTTPRequestHandler,'C9:F0:78:8D:F2:F9',server).new_thread()
-    #new_thread_temp = new_thread()
     
 
 
@@ -265,5 +239,3 @@ if __name__ == '__main__':
         http_server.serve_forever()
     except KeyboardInterrupt:
         http_server.server_close()
-
-
