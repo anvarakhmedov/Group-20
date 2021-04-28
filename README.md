@@ -10,7 +10,7 @@ Motion Sensor: https://www.digikey.com/en/products/detail/parallax-inc/28032/470
 Light Sensor: https://www.digikey.com/en/products/detail/adafruit-industries-llc/4162/9997696  
 
 
-Contributors:  
+Project Team Members:  
 Anvar: Electrical Engineering   
 Anthony: Computer Science  
 Austin: Computer Engineering  
