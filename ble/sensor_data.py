@@ -1,12 +1,8 @@
 import RPi.GPIO as GPIO                                      # used for defining GPIO pins on the Pi
 import os
-#from http.server import BaseHTTPRequestHandler, HTTPServer   # BaseHTTPRequestHandler used for servicing incoming HTTP requests
 from time import sleep
-#from pydbus import SystemBus                                 # Allows for use of services regardless of what language they are written in
                                                              # Multiple processes using the same bus can communicate with eachother
 # Light Sensor Module Libraries
-#import string
-from string import Template
 import board
 import busio
 import adafruit_veml7700
@@ -28,11 +24,6 @@ veml7700 = adafruit_veml7700.VEML7700(i2c)
 
 class sensor_class():
 
-#     def __init__(self):
-#         self.is_touch = GPIO.input(27)
-#         self.is_light = int(veml7700.lux)
-#         self.is_motion = GPIO.input(24)
-
     def read_sensor_data(self):
         self.is_light = int(veml7700.lux)    # measuring light in units of lux 
         #print("Ambient light:", veml7700.light)
@@ -49,8 +40,4 @@ class sensor_class():
         self.brightness = round(-2.5*self.is_light + 250) # interpolation model defined in MATLAB
         if self.brightness < 1:
            self.brightness = 0
-        #dev.char_write(brightness_value, [255-light])
-        #print("is_light:", self.is_light)
-        #return is_touch
-#_thread.start_new_thread(sensor_data.read_sensor_data,())   # start a new thread and run the sensors() function in the server class to read sensor data.
 
