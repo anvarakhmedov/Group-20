@@ -1,6 +1,6 @@
 # Wright State University: Senior Design Group 20
 
-This repo holds the project files for the Smart Light Controller. All file locations must stay in their current directories if this project is downloaded. Run server_setup.py once all files are downloaded. Note that you must use a bluetooth smart bulb and not a wi-fi smart bulb.  
+This repo holds the project files for the Smart Light Controller. All file locations must stay in their current directories if this project is downloaded; simply, download the 'ble' directory making sure that all the successive files/directories are in the correct locations as seen here. Run server_setup.py once all files are downloaded. Note that you must use a bluetooth smart bulb and not a wi-fi smart bulb.  
 
 Parts used in this project:  
 Raspberry Pi 4B (used to run server_setup.py)  
