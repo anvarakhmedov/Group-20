@@ -9,6 +9,9 @@ BLUEZ_SERVICE = 'org.bluez'                           # bluetooth service
 BLUEZ_DEV_IFACE = 'org.bluez.Device1'
 BLUEZ_CHR_IFACE = 'org.bluez.GattCharacteristic1'
 
+light_state = '932c32bd-0002-47a2-835a-a8d455b859dd'   # Attribute ID for toggling light on/off
+brightness_value = '932c32bd-0003-47a2-835a-a8d455b859dd'    # Attribute ID for changing brightness (value between 1-254)
+
 class lightbulb():
 
     light_state = '932c32bd-0002-47a2-835a-a8d455b859dd'   # Attribute ID for toggling light on/off
