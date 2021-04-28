@@ -1,0 +1,21 @@
+Hue bulb mac address:
+C9:F0:78:8D:F2:F9
+
+// To identify your Hue Bulb's MAC address, you must do a bluetooth scan in the terminal window.
+
+to connect to hue bulb officially,
+>bluetoothctl
+connect C9:F0:78:8D:F2:F9
+> menu gatt
+
+// toggle on/off attribute ID: 932c32bd-0002-47a2-835a-a8d455b859dd
+>select-attribute 932c32bd-0002-47a2-835a-a8d455b859dd
+>read		// read current state
+>write 00	// turn off
+>write 01	// turn on
+
+// change brightness attribute ID: 932c32bd-0003-47a2-835a-a8d455b859dd
+>select-attribute 932c32bd-0003-47a2-835a-a8d455b859dd
+>read		// read current brightness value. Output is in hex (fe = 254)
+>write <value between 1-254>	// 1 is lowest brightness, 254 is highest brightness
+ 
