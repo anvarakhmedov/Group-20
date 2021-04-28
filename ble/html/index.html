@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>    
+		<title></title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="shortcut icon" href="html/images/favicon.ico">
+		<link rel="stylesheet" href="css/main.css">
+	</head>  
+	<body>
+		<header>
+		    <h1>Smart Light Controller</h1>
+		</header>    
+		<nav>
+			
+		</nav>
+		<main> 
+			<form action="/" method="POST">
+                Turn LED :
+				<input type="submit" name="submit" value="On">
+				<input type="submit" name="submit" value="Off">
+			</form>
+			<form action="/" method="POST" id="sensorSelect">
+				Select which sensor controls the bulb:
+				<input type="checkbox" id="light" name="light" value="Light" onchange="document.getElementById('sensorSelect').submit()">
+				<label for="light">Light</label>
+				<input type="checkbox" id="motion" name="motion" value="Motion" onchange="document.getElementById('sensorSelect').submit()">
+				<label for="motion">Motion</label>
+				<input type="checkbox" id="neither" name="neither" value="Neither" onchange="document.getElementById('sensorSelect').submit()">
+				<label for="neither">Neither</label>
+			</form>
+			<form action="/" method="POST" id="brightnessForm">
+				<label for="brightness">Brightness: %i :</label>
+				<input type="range" id="brightnessRange" name="Brightness" min="0" max="255" step="10">
+				<!-- 
+				Choose Brightness : 
+				<input type="number" name="quantity">
+				<button type="submit"> Submit </button>
+				-->
+			</form>
+			<script>
+				var slider = document.getElementById("brightnessRange");
+
+				slider.onmouseup = function () {document.getElementById("brightnessForm").submit();}
+			</script>
+
+			
+			<!-- <a href="html/images/history.png" target="_blank">Historical Data</a> -->
+			
+			<img src="html/images/history.png" alt="Historical Activation Data">
+			
+		</main>  
+		<footer>
+			
+		</footer>  
+	</body>
+</html>
