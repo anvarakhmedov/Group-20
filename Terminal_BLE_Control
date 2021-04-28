@@ -1,9 +1,12 @@
+The following commands show you how to control the Hue Bulb in the Raspberry Pi terminal window. Any other linux 
+distribution should work as well. "//" denotes a comment and ">" denotes input in the terminal window.
+
 Hue bulb mac address:
 C9:F0:78:8D:F2:F9
 
 // To identify your Hue Bulb's MAC address, you must do a bluetooth scan in the terminal window.
 
-to connect to hue bulb officially,
+to connect to hue bulb using bluetooth,
 >bluetoothctl
 connect C9:F0:78:8D:F2:F9
 > menu gatt
