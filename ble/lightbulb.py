@@ -5,28 +5,14 @@ from pydbus import SystemBus                                 # Allows for use of
                                                              # Multiple processes using the same bus can communicate with eachother
 import importlib
 
-
 BLUEZ_SERVICE = 'org.bluez'                           # bluetooth service
 BLUEZ_DEV_IFACE = 'org.bluez.Device1'
 BLUEZ_CHR_IFACE = 'org.bluez.GattCharacteristic1'
 
-light_state = '932c32bd-0002-47a2-835a-a8d455b859dd'   # characteristic ID for toggling light on/off
-brightness_value = '932c32bd-0003-47a2-835a-a8d455b859dd'    # charactersitic ID for changing brightness (value between 1-254)
-
-"""        
-# GPIO setup
-GPIO.setmode(GPIO.BCM) # BCM is the numbering system you see on the actual pins
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-GPIO.setup(18,GPIO.OUT)
-"""
-
-
 class lightbulb():
 
-    light_state = '932c32bd-0002-47a2-835a-a8d455b859dd'   # characteristic ID for toggling light on/off
-    brightness_value = '932c32bd-0003-47a2-835a-a8d455b859dd'    # charactersitic ID for changing brightness (value between 1-254)
+    light_state = '932c32bd-0002-47a2-835a-a8d455b859dd'   # Attribute ID for toggling light on/off
+    brightness_value = '932c32bd-0003-47a2-835a-a8d455b859dd'    # Attribute ID for changing brightness (value between 1-254)
 
 
     def __init__(self, address):   # function to initialize mac address of bulb. self is an object used for calls and address (MAC) is an input
@@ -123,5 +109,6 @@ class lightbulb():
         
     #~~~~~~~~~~~~~~~~~~~~~ END Bulb Controlling Functions ~~~~~~~~~~~~~~~~~~~~~~~ 
        
+
 
 
