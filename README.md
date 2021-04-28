@@ -1,14 +1,16 @@
-# Group-20
-Repo for project-related files
+# Wright State University: Senior Design Group 20
+
+This repo holds the project files for the Smart Light Controller. All file locations must stay in their current directories if this project is downloaded. Run server_setup.py once all files are downloaded.
+
 
 Status Update:
 
-Anvar: active
+Anvar: Electrical Engineering 
 
-Anthony: active
+Anthony: Computer Science
 
-Austin:
+Austin: Computer Engineering
 
-Grant:
-
-Tristan:active
+Grant: Electrical Engineering
+ 
+Tristan: Electrical Engineering
